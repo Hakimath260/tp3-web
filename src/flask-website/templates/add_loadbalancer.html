@@ -7,20 +7,70 @@
         <div class="col">
             <h1>Ajouter un Load Balancer</h1>
 
+            <div class="alert alert-info">
+                <strong>Exemples d'entrées valides :</strong><br>
+                Nom : <code>LB Inter 3</code><br>
+                IP Bind : <code>172.0.0.3</code><br>
+                Proxy Pass : <code>http://localhost/C</code>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
             <form method="post">
                 <div class="mb-3">
                     <label for="name" class="form-label">Nom</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="name"
+                        name="name"
+                        placeholder="Exemple : LB Inter 3"
+                        pattern="[A-Za-z0-9 _-]{2,50}"
+                        title="2 à 50 caractères : lettres, chiffres, espaces, tirets ou underscores"
+                        required>
+                    <div class="form-text">
+                        Format attendu : lettres, chiffres, espaces, tirets ou underscores.
+                    </div>
                 </div>
 
                 <div class="mb-3">
                     <label for="ip_bind" class="form-label">IP Bind</label>
-                    <input type="text" class="form-control" id="ip_bind" name="ip_bind" required>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="ip_bind"
+                        name="ip_bind"
+                        placeholder="Exemple : 172.0.0.3"
+                        pattern="(\d{1,3}\.){3}\d{1,3}"
+                        title="Entrez une adresse IPv4, par exemple 172.0.0.3"
+                        required>
+                    <div class="form-text">
+                        Format attendu : adresse IPv4.
+                    </div>
                 </div>
 
                 <div class="mb-3">
                     <label for="pass" class="form-label">Proxy Pass</label>
-                    <input type="text" class="form-control" id="pass" name="pass" required>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="pass"
+                        name="pass"
+                        placeholder="Exemple : http://localhost/C"
+                        pattern="https?://[A-Za-z0-9._/-]+"
+                        title="Doit commencer par http:// ou https://"
+                        required>
+                    <div class="form-text">
+                        Format attendu : URL commençant par <code>http://</code> ou <code>https://</code>.
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-success">Ajouter</button>

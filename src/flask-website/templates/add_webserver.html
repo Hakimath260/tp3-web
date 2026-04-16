@@ -7,30 +7,104 @@
         <div class="col">
             <h1>Ajouter un Web Server</h1>
 
+            <div class="alert alert-info">
+                <strong>Exemples d'entrées valides :</strong><br>
+                Nom : <code>Web Server 3</code><br>
+                Root : <code>/var/www/site3</code><br>
+                Index : <code>index.html index.htm</code><br>
+                Error Page : <code>404 500 /error-page.html</code><br>
+                Error Root : <code>/var/www/error</code>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
             <form method="post">
                 <div class="mb-3">
                     <label for="name" class="form-label">Nom</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="name"
+                        name="name"
+                        placeholder="Exemple : Web Server 3"
+                        pattern="[A-Za-z0-9 _-]{2,50}"
+                        title="2 à 50 caractères : lettres, chiffres, espaces, tirets ou underscores"
+                        required>
+                    <div class="form-text">
+                        Format attendu : lettres, chiffres, espaces, tirets ou underscores.
+                    </div>
                 </div>
 
                 <div class="mb-3">
                     <label for="root" class="form-label">Root</label>
-                    <input type="text" class="form-control" id="root" name="root" required>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="root"
+                        name="root"
+                        placeholder="Exemple : /var/www/site3"
+                        pattern="/[A-Za-z0-9_./-]+"
+                        title="Chemin absolu commençant par /"
+                        required>
+                    <div class="form-text">
+                        Format attendu : chemin absolu commençant par <code>/</code>.
+                    </div>
                 </div>
 
                 <div class="mb-3">
                     <label for="index" class="form-label">Index</label>
-                    <input type="text" class="form-control" id="index" name="index" required>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="index"
+                        name="index"
+                        placeholder="Exemple : index.html index.htm"
+                        pattern="[A-Za-z0-9_. -]+"
+                        title="Noms de fichiers séparés par des espaces"
+                        required>
+                    <div class="form-text">
+                        Format attendu : un ou plusieurs fichiers d’index séparés par des espaces.
+                    </div>
                 </div>
 
                 <div class="mb-3">
                     <label for="error_page" class="form-label">Error Page</label>
-                    <input type="text" class="form-control" id="error_page" name="error_page" required>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="error_page"
+                        name="error_page"
+                        placeholder="Exemple : 404 500 /error-page.html"
+                        pattern="(\d{3}\s+)+/[A-Za-z0-9_./-]+"
+                        title="Un ou plusieurs codes HTTP suivis d’un chemin"
+                        required>
+                    <div class="form-text">
+                        Format attendu : codes HTTP puis chemin, par exemple <code>404 500 /error-page.html</code>.
+                    </div>
                 </div>
 
                 <div class="mb-3">
                     <label for="error_root" class="form-label">Error Root</label>
-                    <input type="text" class="form-control" id="error_root" name="error_root" required>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="error_root"
+                        name="error_root"
+                        placeholder="Exemple : /var/www/error"
+                        pattern="/[A-Za-z0-9_./-]+"
+                        title="Chemin absolu commençant par /"
+                        required>
+                    <div class="form-text">
+                        Format attendu : chemin absolu commençant par <code>/</code>.
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-success">Ajouter</button>

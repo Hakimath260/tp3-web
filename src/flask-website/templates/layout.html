@@ -484,6 +484,14 @@
                         Accueil
                     </a>
                 </li>
+                {% if session.get('user') %}
+                <li class="nav-item">
+                    <span class="nav-link">Connecté : {{ session.get('user') }}</span>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-danger btn-sm ms-2" href="{{ url_for('logout') }}">Déconnexion</a>
+                </li>
+                {% endif %}
                 <li>
                     <a class="nav-lnk" href="{{ url_for('loadbalancers') }}">
                         <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>

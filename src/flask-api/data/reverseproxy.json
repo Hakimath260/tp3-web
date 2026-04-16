@@ -16,5 +16,14 @@
     "server1": "api1.domain.tld",
     "server2": "api2.domain.tld",
     "proxy_pass": "http://backend_api"
+  },
+  {
+    "id": 3,
+    "name": "Reverse Proxy 3",
+    "upstream_name": "backend_api",
+    "lb_strategy_method": "round_robin",
+    "server1": "api1.domain.tld",
+    "server2": "api2.domain.tld",
+    "proxy_pass": "http://backend_api"
   }
 ]

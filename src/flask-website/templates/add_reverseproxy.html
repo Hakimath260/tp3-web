@@ -7,35 +7,121 @@
         <div class="col">
             <h1>Ajouter un Reverse Proxy</h1>
 
+            <div class="alert alert-info">
+                <strong>Exemples d'entrées valides :</strong><br>
+                Nom : <code>Reverse Proxy 3</code><br>
+                Nom Upstream : <code>backend_api</code><br>
+                Méthode d'équilibrage : <code>least_conn</code> ou <code>ip_hash</code> ou <code>round_robin</code><br>
+                Server 1 : <code>api1.domain.tld</code><br>
+                Server 2 : <code>api2.domain.tld</code><br>
+                Proxy Pass : <code>http://backend_api</code>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
             <form method="post">
                 <div class="mb-3">
                     <label for="name" class="form-label">Nom</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="name"
+                        name="name"
+                        placeholder="Exemple : Reverse Proxy 3"
+                        pattern="[A-Za-z0-9 _-]{2,50}"
+                        title="2 à 50 caractères : lettres, chiffres, espaces, tirets ou underscores"
+                        required>
+                    <div class="form-text">
+                        Format attendu : lettres, chiffres, espaces, tirets ou underscores.
+                    </div>
                 </div>
 
                 <div class="mb-3">
                     <label for="upstream_name" class="form-label">Nom Upstream</label>
-                    <input type="text" class="form-control" id="upstream_name" name="upstream_name" required>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="upstream_name"
+                        name="upstream_name"
+                        placeholder="Exemple : backend_api"
+                        pattern="[A-Za-z0-9 _-]{2,50}"
+                        title="2 à 50 caractères : lettres, chiffres, espaces, tirets ou underscores"
+                        required>
+                    <div class="form-text">
+                        Format attendu : lettres, chiffres, espaces, tirets ou underscores.
+                    </div>
                 </div>
 
                 <div class="mb-3">
                     <label for="lb_strategy_method" class="form-label">Méthode d'équilibrage</label>
-                    <input type="text" class="form-control" id="lb_strategy_method" name="lb_strategy_method" required>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="lb_strategy_method"
+                        name="lb_strategy_method"
+                        placeholder="Exemple : least_conn"
+                        pattern="least_conn|ip_hash|round_robin"
+                        title="Valeurs autorisées : least_conn, ip_hash, round_robin"
+                        required>
+                    <div class="form-text">
+                        Valeurs autorisées : <code>least_conn</code>, <code>ip_hash</code>, <code>round_robin</code>.
+                    </div>
                 </div>
 
                 <div class="mb-3">
                     <label for="server1" class="form-label">Server 1</label>
-                    <input type="text" class="form-control" id="server1" name="server1" required>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="server1"
+                        name="server1"
+                        placeholder="Exemple : api1.domain.tld"
+                        pattern="[A-Za-z0-9.-]{3,100}"
+                        title="Nom de domaine ou nom de serveur valide"
+                        required>
+                    <div class="form-text">
+                        Format attendu : nom de domaine ou nom de serveur.
+                    </div>
                 </div>
 
                 <div class="mb-3">
                     <label for="server2" class="form-label">Server 2</label>
-                    <input type="text" class="form-control" id="server2" name="server2" required>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="server2"
+                        name="server2"
+                        placeholder="Exemple : api2.domain.tld"
+                        pattern="[A-Za-z0-9.-]{3,100}"
+                        title="Nom de domaine ou nom de serveur valide"
+                        required>
+                    <div class="form-text">
+                        Format attendu : nom de domaine ou nom de serveur.
+                    </div>
                 </div>
 
                 <div class="mb-3">
                     <label for="proxy_pass" class="form-label">Proxy Pass</label>
-                    <input type="text" class="form-control" id="proxy_pass" name="proxy_pass" required>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="proxy_pass"
+                        name="proxy_pass"
+                        placeholder="Exemple : http://backend_api"
+                        pattern="https?://[A-Za-z0-9._/-]+"
+                        title="Doit commencer par http:// ou https://"
+                        required>
+                    <div class="form-text">
+                        Format attendu : URL commençant par <code>http://</code> ou <code>https://</code>.
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-success">Ajouter</button>

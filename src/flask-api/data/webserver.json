@@ -14,5 +14,13 @@
     "index": "index.html",
     "error_page": "404 500 /error-page.html",
     "error_root": "/srv/www/error"
+  },
+  {
+    "id": 3,
+    "name": "Web Server 3",
+    "root": "/var/www/site3",
+    "index": "index.html index.htm",
+    "error_page": "404 500 /error-page.html",
+    "error_root": "/var/www/error"
   }
 ]
