@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request, session, flash
+from flask import Flask, render_template, redirect, url_for, request, session, flash, Response
 import urllib.request
 import json
 from functools import wraps
@@ -96,6 +96,58 @@ def is_valid_ipv4(value):
     return all(0 <= int(part) <= 255 for part in parts)
 
 
+def safe_filename(value):
+    return re.sub(r"[^A-Za-z0-9_-]", "_", value)
+
+
+def generate_loadbalancer_config(data):
+    return f"""http {{
+    server {{
+        location / {{
+            proxy_bind {data['ip_bind']};
+            proxy_pass {data['pass']};
+        }}
+    }}
+}}
+"""
+
+
+def generate_webserver_config(data):
+    return f"""http {{
+    server {{
+        root {data['root']};
+
+        location / {{
+            index {data['index']};
+        }}
+
+        error_page {data['error_page']};
+        location = /error-page.html {{
+            root {data['error_root']};
+            internal;
+        }}
+    }}
+}}
+"""
+
+
+def generate_reverseproxy_config(data):
+    return f"""http {{
+    upstream {data['upstream_name']} {{
+        {data['lb_strategy_method']};
+        server {data['server1']};
+        server {data['server2']};
+    }}
+
+    server {{
+        location / {{
+            proxy_pass {data['proxy_pass']};
+        }}
+    }}
+}}
+"""
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -180,6 +232,20 @@ def delete_loadbalancer(lb_id):
     return redirect(url_for("loadbalancers"))
 
 
+@app.route("/loadbalancers/<int:lb_id>/download")
+@login_required
+def download_loadbalancer_config(lb_id):
+    data = get_api_data(f"/loadbalancers/{lb_id}")
+    config_text = generate_loadbalancer_config(data)
+    filename = f"{safe_filename(data['name'])}.conf"
+
+    return Response(
+        config_text,
+        mimetype="text/plain",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+
+
 @app.route("/webservers")
 @login_required
 def webservers():
@@ -243,6 +309,20 @@ def add_webserver():
 def delete_webserver(web_id):
     delete_api_data(f"/webservers/{web_id}")
     return redirect(url_for("webservers"))
+
+
+@app.route("/webservers/<int:web_id>/download")
+@login_required
+def download_webserver_config(web_id):
+    data = get_api_data(f"/webservers/{web_id}")
+    config_text = generate_webserver_config(data)
+    filename = f"{safe_filename(data['name'])}.conf"
+
+    return Response(
+        config_text,
+        mimetype="text/plain",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
 
 
 @app.route("/reverseproxies")
@@ -314,3 +394,17 @@ def add_reverseproxy():
 def delete_reverseproxy(proxy_id):
     delete_api_data(f"/reverseproxies/{proxy_id}")
     return redirect(url_for("reverseproxies"))
+
+
+@app.route("/reverseproxies/<int:proxy_id>/download")
+@login_required
+def download_reverseproxy_config(proxy_id):
+    data = get_api_data(f"/reverseproxies/{proxy_id}")
+    config_text = generate_reverseproxy_config(data)
+    filename = f"{safe_filename(data['name'])}.conf"
+
+    return Response(
+        config_text,
+        mimetype="text/plain",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
