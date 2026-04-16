@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block title %}Ajouter Reverse Proxy{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Ajouter un Reverse Proxy</h1>
+
+            <form method="post">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nom</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="upstream_name" class="form-label">Nom Upstream</label>
+                    <input type="text" class="form-control" id="upstream_name" name="upstream_name" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="lb_strategy_method" class="form-label">Méthode d'équilibrage</label>
+                    <input type="text" class="form-control" id="lb_strategy_method" name="lb_strategy_method" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="server1" class="form-label">Server 1</label>
+                    <input type="text" class="form-control" id="server1" name="server1" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="server2" class="form-label">Server 2</label>
+                    <input type="text" class="form-control" id="server2" name="server2" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="proxy_pass" class="form-label">Proxy Pass</label>
+                    <input type="text" class="form-control" id="proxy_pass" name="proxy_pass" required>
+                </div>
+
+                <button type="submit" class="btn btn-success">Ajouter</button>
+                <a href="{{ url_for('reverseproxies') }}" class="btn btn-secondary">Retour</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

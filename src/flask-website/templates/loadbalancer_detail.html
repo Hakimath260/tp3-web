@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block title %}Détail Load Balancer{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Détail du Load Balancer</h1>
+
+            <p><strong>ID :</strong> {{ data.id }}</p>
+            <p><strong>Nom :</strong> {{ data.name }}</p>
+            <p><strong>IP Bind :</strong> {{ data.ip_bind }}</p>
+            <p><strong>Proxy Pass :</strong> {{ data.pass }}</p>
+
+            <h2>Configuration Nginx générée</h2>
+            <pre>
+http {
+    server {
+        location / {
+            proxy_bind {{ data.ip_bind }};
+            proxy_pass {{ data.pass }};
+        }
+    }
+}
+            </pre>
+        </div>
+    </div>
+</div>
+{% endblock %}

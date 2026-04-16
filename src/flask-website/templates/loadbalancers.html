@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block title %}Load Balancers{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Liste des Load Balancers</h1>
+
+            <p>
+                <a class="btn btn-success" href="{{ url_for('add_loadbalancer') }}">
+                    Ajouter un Load Balancer
+                </a>
+            </p>
+
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>IP Bind</th>
+                        <th>Proxy Pass</th>
+                        <th>Détail</th>
+                        <th>Suppression</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in data %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.ip_bind }}</td>
+                        <td>{{ item.pass }}</td>
+                        <td>
+                            <a class="btn btn-primary btn-sm" href="{{ url_for('loadbalancer_detail', lb_id=item.id) }}">
+                                Voir
+                            </a>
+                        </td>
+                        <td>
+                            <form method="post" action="{{ url_for('delete_loadbalancer', lb_id=item.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block title %}Détail Reverse Proxy{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Détail du Reverse Proxy</h1>
+
+            <p><strong>ID :</strong> {{ data.id }}</p>
+            <p><strong>Nom :</strong> {{ data.name }}</p>
+            <p><strong>Upstream :</strong> {{ data.upstream_name }}</p>
+            <p><strong>Strategy :</strong> {{ data.lb_strategy_method }}</p>
+            <p><strong>Server 1 :</strong> {{ data.server1 }}</p>
+            <p><strong>Server 2 :</strong> {{ data.server2 }}</p>
+            <p><strong>Proxy Pass :</strong> {{ data.proxy_pass }}</p>
+
+            <h2>Configuration Nginx générée</h2>
+            <pre>
+http {
+    upstream {{ data.upstream_name }} {
+        {{ data.lb_strategy_method }};
+        server {{ data.server1 }};
+        server {{ data.server2 }};
+    }
+
+    server {
+        location / {
+            proxy_pass {{ data.proxy_pass }};
+        }
+    }
+}
+            </pre>
+        </div>
+    </div>
+</div>
+{% endblock %}

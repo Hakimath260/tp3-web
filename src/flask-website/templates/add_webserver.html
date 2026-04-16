@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block title %}Ajouter Web Server{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Ajouter un Web Server</h1>
+
+            <form method="post">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nom</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="root" class="form-label">Root</label>
+                    <input type="text" class="form-control" id="root" name="root" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="index" class="form-label">Index</label>
+                    <input type="text" class="form-control" id="index" name="index" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="error_page" class="form-label">Error Page</label>
+                    <input type="text" class="form-control" id="error_page" name="error_page" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="error_root" class="form-label">Error Root</label>
+                    <input type="text" class="form-control" id="error_root" name="error_root" required>
+                </div>
+
+                <button type="submit" class="btn btn-success">Ajouter</button>
+                <a href="{{ url_for('webservers') }}" class="btn btn-secondary">Retour</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

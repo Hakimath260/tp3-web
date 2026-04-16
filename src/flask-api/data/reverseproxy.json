@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "name": "Reverse Proxy 1",
+    "upstream_name": "backend",
+    "lb_strategy_method": "least_conn",
+    "server1": "server1.domain.tld",
+    "server2": "server2.domain.tld",
+    "proxy_pass": "http://backend"
+  },
+  {
+    "id": 2,
+    "name": "Reverse Proxy 2",
+    "upstream_name": "backend_api",
+    "lb_strategy_method": "ip_hash",
+    "server1": "api1.domain.tld",
+    "server2": "api2.domain.tld",
+    "proxy_pass": "http://backend_api"
+  }
+]

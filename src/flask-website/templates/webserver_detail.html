@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block title %}Détail Web Server{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Détail du Web Server</h1>
+
+            <p><strong>ID :</strong> {{ data.id }}</p>
+            <p><strong>Nom :</strong> {{ data.name }}</p>
+            <p><strong>Root :</strong> {{ data.root }}</p>
+            <p><strong>Index :</strong> {{ data.index }}</p>
+            <p><strong>Error Page :</strong> {{ data.error_page }}</p>
+            <p><strong>Error Root :</strong> {{ data.error_root }}</p>
+
+            <h2>Configuration Nginx générée</h2>
+            <pre>
+http {
+    server {
+        root {{ data.root }};
+
+        location / {
+            index {{ data.index }};
+        }
+
+        error_page {{ data.error_page }};
+        location = /error-page.html {
+            root {{ data.error_root }};
+            internal;
+        }
+    }
+}
+            </pre>
+        </div>
+    </div>
+</div>
+{% endblock %}

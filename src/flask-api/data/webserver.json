@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "name": "Web Server 1",
+    "root": "/www/data",
+    "index": "index.html index.htm",
+    "error_page": "404 403 500 503 /error-page.html",
+    "error_root": "/var/www/error"
+  },
+  {
+    "id": 2,
+    "name": "Web Server 2",
+    "root": "/srv/www/site",
+    "index": "index.html",
+    "error_page": "404 500 /error-page.html",
+    "error_root": "/srv/www/error"
+  }
+]

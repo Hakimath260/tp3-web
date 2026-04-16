@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block title %}Web Servers{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Liste des Web Servers</h1>
+
+            <p>
+                <a class="btn btn-success" href="{{ url_for('add_webserver') }}">
+                    Ajouter un Web Server
+                </a>
+            </p>
+
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Root</th>
+                        <th>Index</th>
+                        <th>Détail</th>
+                        <th>Suppression</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in data %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.root }}</td>
+                        <td>{{ item.index }}</td>
+                        <td>
+                            <a class="btn btn-primary btn-sm" href="{{ url_for('webserver_detail', web_id=item.id) }}">
+                                Voir
+                            </a>
+                        </td>
+                        <td>
+                            <form method="post" action="{{ url_for('delete_webserver', web_id=item.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

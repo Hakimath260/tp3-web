@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block title %}Reverse Proxies{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Liste des Reverse Proxies</h1>
+
+            <p>
+                <a class="btn btn-success" href="{{ url_for('add_reverseproxy') }}">
+                    Ajouter un Reverse Proxy
+                </a>
+            </p>
+
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Upstream</th>
+                        <th>Strategy</th>
+                        <th>Détail</th>
+                        <th>Suppression</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in data %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.upstream_name }}</td>
+                        <td>{{ item.lb_strategy_method }}</td>
+                        <td>
+                            <a class="btn btn-primary btn-sm" href="{{ url_for('reverseproxy_detail', proxy_id=item.id) }}">
+                                Voir
+                            </a>
+                        </td>
+                        <td>
+                            <form method="post" action="{{ url_for('delete_reverseproxy', proxy_id=item.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
