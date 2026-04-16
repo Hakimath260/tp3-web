@@ -1,67 +1,554 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <link href="https://fonts.googleapis.com/css?family=Arsenal" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
+
     {% block head %}
-    <title>Web Configurator > {% block title %}{% endblock %}</title>
+    <title>Web Configurator › {% block title %}{% endblock %}</title>
     {% endblock %}
+
+    <style>
+        /* ── DESIGN TOKENS ───────────────────────────── */
+        :root {
+            --bg-base:       #0b0f14;
+            --bg-surface:    #131920;
+            --bg-elevated:   #1a2230;
+            --bg-card:       #161d27;
+            --border:        #263040;
+            --border-light:  #1c2535;
+            --accent:        #38bdf8;
+            --accent-dim:    rgba(56, 189, 248, 0.10);
+            --accent-glow:   rgba(56, 189, 248, 0.30);
+            --text-primary:  #e2eaf4;
+            --text-secondary:#94a3b8;
+            --text-muted:    #64748b;
+            --text-subtle:   #3a4a5c;
+            --danger:        #ef4444;
+            --danger-dim:    rgba(239, 68, 68, 0.12);
+            --success:       #22c55e;
+            --success-dim:   rgba(34, 197, 94, 0.12);
+            --warning:       #f59e0b;
+            --nav-h:         60px;
+            --banner-h:      38px;
+            --footer-h:      46px;
+            --font-ui:       'Outfit', sans-serif;
+            --font-mono:     'JetBrains Mono', monospace;
+            --radius:        8px;
+            --radius-sm:     5px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100%;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: var(--font-ui);
+            font-size: 14px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── SUBTLE GRID BACKGROUND ──────────────────── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--border-light) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border-light) 1px, transparent 1px);
+            background-size: 48px 48px;
+            opacity: 0.35;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body > * { position: relative; z-index: 1; }
+
+        /* ══════════════════════════════════════════════
+           BOOTSTRAP OVERRIDES — texte toujours clair
+        ══════════════════════════════════════════════ */
+
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { color: var(--text-primary); }
+
+        /* Tables */
+        .table {
+            color: var(--text-primary) !important;
+            border-color: var(--border) !important;
+            font-size: 13.5px;
+        }
+        .table thead th {
+            color: var(--text-muted) !important;
+            background-color: var(--bg-elevated) !important;
+            border-color: var(--border) !important;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 10px 16px;
+        }
+        .table tbody tr { border-color: var(--border-light) !important; }
+        .table tbody tr:hover {
+            background-color: var(--bg-elevated) !important;
+            color: var(--text-primary) !important;
+        }
+        .table tbody td {
+            color: var(--text-primary) !important;
+            background-color: transparent !important;
+            border-color: var(--border-light) !important;
+            padding: 10px 16px;
+            vertical-align: middle;
+        }
+        .table-striped > tbody > tr:nth-of-type(odd) > * {
+            color: var(--text-primary) !important;
+            background-color: rgba(255,255,255,0.02) !important;
+        }
+        .table-bordered { border-color: var(--border) !important; }
+
+        /* Cards */
+        .card {
+            background-color: var(--bg-card) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: var(--radius) !important;
+            color: var(--text-primary) !important;
+        }
+        .card-header {
+            background-color: var(--bg-elevated) !important;
+            border-bottom: 1px solid var(--border) !important;
+            color: var(--text-primary) !important;
+            font-weight: 500;
+        }
+        .card-body { color: var(--text-primary) !important; }
+
+        /* Forms */
+        .form-control, .form-select {
+            background-color: var(--bg-elevated) !important;
+            border: 1px solid var(--border) !important;
+            color: var(--text-primary) !important;
+            border-radius: var(--radius-sm) !important;
+            font-family: var(--font-ui) !important;
+            font-size: 13.5px !important;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: var(--bg-elevated) !important;
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 3px var(--accent-dim) !important;
+            color: var(--text-primary) !important;
+            outline: none;
+        }
+        .form-control::placeholder { color: var(--text-muted) !important; opacity: 1; }
+        .form-label {
+            color: var(--text-secondary) !important;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+        .form-text { color: var(--text-muted) !important; }
+        .form-select option {
+            background-color: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        /* Alerts */
+        .alert { border-radius: var(--radius-sm) !important; font-size: 13.5px; }
+        .alert-danger  { background: var(--danger-dim)  !important; color: #fca5a5 !important; border-color: rgba(239,68,68,0.3)  !important; }
+        .alert-success { background: var(--success-dim) !important; color: #86efac !important; border-color: rgba(34,197,94,0.3)  !important; }
+        .alert-warning { background: rgba(245,158,11,.1)  !important; color: #fcd34d !important; border-color: rgba(245,158,11,0.3) !important; }
+        .alert-info    { background: var(--accent-dim)  !important; color: #7dd3fc !important; border-color: rgba(56,189,248,0.3) !important; }
+
+        /* Buttons */
+        .btn {
+            font-family: var(--font-ui) !important;
+            font-size: 13px !important;
+            font-weight: 500 !important;
+            border-radius: var(--radius-sm) !important;
+            padding: 6px 14px !important;
+            transition: all 0.15s ease !important;
+        }
+        .btn-primary   { background: var(--accent)   !important; border-color: var(--accent)   !important; color: #0b0f14 !important; }
+        .btn-primary:hover { background: #7dd3fc !important; border-color: #7dd3fc !important; }
+        .btn-danger    { background: var(--danger)   !important; border-color: var(--danger)   !important; color: #fff !important; }
+        .btn-danger:hover  { background: #dc2626 !important; border-color: #dc2626 !important; }
+        .btn-success   { background: var(--success)  !important; border-color: var(--success)  !important; color: #0b0f14 !important; }
+        .btn-secondary { background: var(--bg-elevated) !important; border-color: var(--border) !important; color: var(--text-primary) !important; }
+        .btn-secondary:hover { background: var(--border) !important; color: var(--text-primary) !important; }
+        .btn-outline-primary { border-color: var(--accent) !important; color: var(--accent) !important; }
+        .btn-outline-primary:hover { background: var(--accent-dim) !important; }
+        .btn-sm { padding: 4px 10px !important; font-size: 12px !important; }
+
+        /* Badges */
+        .badge { font-family: var(--font-mono) !important; font-size: 10px !important; border-radius: 4px !important; }
+
+        /* List groups */
+        .list-group-item {
+            background-color: var(--bg-card) !important;
+            border-color: var(--border) !important;
+            color: var(--text-primary) !important;
+        }
+        .list-group-item:hover { background-color: var(--bg-elevated) !important; }
+        .list-group-item.active {
+            background-color: var(--accent-dim) !important;
+            border-color: rgba(56,189,248,.3) !important;
+            color: var(--accent) !important;
+        }
+
+        /* Modals */
+        .modal-content {
+            background-color: var(--bg-surface) !important;
+            border: 1px solid var(--border) !important;
+            color: var(--text-primary) !important;
+        }
+        .modal-header { border-bottom: 1px solid var(--border) !important; }
+        .modal-footer { border-top:    1px solid var(--border) !important; }
+        .btn-close { filter: invert(1) !important; }
+
+        /* Code / Pre */
+        code, pre {
+            font-family: var(--font-mono) !important;
+            border-radius: var(--radius-sm) !important;
+        }
+        code { color: var(--accent) !important; background: var(--bg-elevated) !important; padding: 1px 5px; }
+        pre {
+            border: 1px solid var(--border) !important;
+            padding: 16px !important;
+            color: var(--text-primary) !important;
+            background: var(--bg-elevated) !important;
+        }
+
+        /* ══════════════════════════════════════════════
+           TOPBAR
+        ══════════════════════════════════════════════ */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: var(--nav-h);
+            background: rgba(11, 15, 20, 0.94);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+        }
+
+        .topbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none !important;
+            flex-shrink: 0;
+            margin-right: 20px;
+        }
+
+        .brand-icon {
+            width: 34px; height: 34px;
+            background: var(--accent-dim);
+            border: 1px solid rgba(56,189,248,.4);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 14px var(--accent-glow);
+        }
+
+        .brand-icon svg {
+            width: 16px; height: 16px;
+            stroke: var(--accent); fill: none;
+            stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+        }
+
+        .brand-name {
+            font-family: var(--font-ui);
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary) !important;
+            letter-spacing: -0.01em;
+        }
+
+        .brand-name em { color: var(--accent); font-style: normal; }
+
+        .topbar-sep {
+            width: 1px; height: 22px;
+            background: var(--border);
+            margin: 0 20px;
+            flex-shrink: 0;
+        }
+
+        .topbar-nav {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            list-style: none;
+            flex: 1;
+            margin: 0; padding: 0;
+        }
+
+        .topbar-nav .nav-lnk {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 13px;
+            border-radius: var(--radius-sm);
+            font-size: 13.5px;
+            font-weight: 500;
+            color: var(--text-secondary) !important;
+            text-decoration: none !important;
+            border: 1px solid transparent;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+            letter-spacing: -0.01em;
+        }
+
+        .topbar-nav .nav-lnk svg {
+            width: 14px; height: 14px;
+            stroke: currentColor; fill: none;
+            stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+
+        .topbar-nav .nav-lnk:hover {
+            color: var(--text-primary) !important;
+            background: var(--bg-elevated);
+            border-color: var(--border);
+        }
+
+        .topbar-nav .nav-lnk.is-active {
+            color: var(--accent) !important;
+            background: var(--accent-dim);
+            border-color: rgba(56,189,248,.25);
+        }
+
+        .topbar-toggler {
+            display: none;
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 6px 8px;
+            cursor: pointer;
+            color: var(--text-muted);
+            margin-left: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .topbar-toggler svg {
+            width: 18px; height: 18px;
+            stroke: currentColor; fill: none;
+            stroke-width: 2; stroke-linecap: round;
+        }
+
+        /* ── STATUS BANNER ─────────────────────────── */
+        .status-banner {
+            height: var(--banner-h);
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 0 24px;
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .status-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 6px var(--success);
+            animation: blink 2.4s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.3; }
+        }
+
+        .banner-sep { color: var(--text-subtle); font-size: 12px; }
+
+        /* ── MAIN CONTENT ──────────────────────────── */
+        .main-content {
+            min-height: calc(100vh - var(--nav-h) - var(--banner-h) - var(--footer-h));
+            padding: 28px 0 calc(var(--footer-h) + 28px);
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            list-style: none;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-subtle);
+            margin: 0 0 24px;
+            padding: 0;
+        }
+
+        .breadcrumb-item a { color: var(--text-muted) !important; text-decoration: none; transition: color .15s; }
+        .breadcrumb-item a:hover { color: var(--accent) !important; }
+        .breadcrumb-item.active { color: var(--text-secondary) !important; }
+        .breadcrumb-item + .breadcrumb-item::before { content: '/'; color: var(--text-subtle); margin-right: 6px; }
+
+        /* ── FOOTER ─────────────────────────────────── */
+        .site-footer {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            z-index: 999;
+            height: var(--footer-h);
+            background: rgba(11,15,20,.96);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .footer-copy { font-family: var(--font-mono); font-size: 11px; color: var(--text-subtle); }
+        .footer-copy strong { color: var(--text-muted); font-weight: 400; }
+
+        .footer-tag {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text-subtle);
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px 9px;
+        }
+
+        /* ── MOBILE ─────────────────────────────────── */
+        @media (max-width: 768px) {
+            .topbar-toggler  { display: flex; }
+            .topbar-sep      { display: none; }
+
+            .topbar-nav-wrap {
+                display: none;
+                position: absolute;
+                top: var(--nav-h);
+                left: 0; right: 0;
+                background: var(--bg-surface);
+                border-bottom: 1px solid var(--border);
+                padding: 10px 16px;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .topbar-nav-wrap.open { display: flex; }
+            .topbar-nav { flex-direction: column; width: 100%; }
+            .topbar-nav .nav-lnk { width: 100%; }
+
+            .status-banner { height: auto; padding: 8px 16px; gap: 10px; flex-wrap: wrap; }
+            .banner-sep    { display: none; }
+            .site-footer   { padding: 0 16px; }
+            .footer-tag    { display: none; }
+        }
+    </style>
 </head>
 
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="/">Web Configurator</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="{{ url_for('loadbalancers') }}">Loadbalancers</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('loadbalancers') }}">Load Balancers</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('webservers') }}">Web Servers</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('reverseproxies') }}">Reverse Proxies</a>
-            </li>
-        </nav>
-    </header>
 
-    <section>
-        <div class="container">
-            <div class="row">
-                <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ url_for('start') }}">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">{{ self.title() }}</li>
-                    </ol>
-                </nav>
+<header>
+    <nav class="topbar">
+        <a class="topbar-brand" href="/">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
             </div>
+            <span class="brand-name">Web<em>Config</em></span>
+        </a>
+
+        <div class="topbar-sep"></div>
+
+        <div class="topbar-nav-wrap" id="mainNav">
+            <ul class="topbar-nav">
+                <li>
+                    <a class="nav-lnk" href="{{ url_for('start') }}">
+                        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        Accueil
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-lnk" href="{{ url_for('loadbalancers') }}">
+                        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                        Load Balancers
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-lnk" href="{{ url_for('webservers') }}">
+                        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                        Web Servers
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-lnk" href="{{ url_for('reverseproxies') }}">
+                        <svg viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                        Reverse Proxies
+                    </a>
+                </li>
+            </ul>
         </div>
-        {% block content %}{% endblock %}
-    </section>
-    <footer>
-        <nav class="navbar fixed-bottom navbar-light bg-light">
-            <div class="container-fluid">
-                Copyright Univ-Savoie
-            </div>
+
+        <button class="topbar-toggler" id="navToggler" aria-label="Menu">
+            <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+    </nav>
+
+    <div class="status-banner">
+        <div class="status-pill">
+            <div class="status-dot"></div>
+            Système opérationnel
+        </div>
+        <span class="banner-sep">·</span>
+        <div class="status-pill">TP – Générateur de configuration Web</div>
+        <span class="banner-sep">·</span>
+        <div class="status-pill">Ait Hamou Hakim &nbsp;·&nbsp; L3 TRI2 &nbsp;·&nbsp; 16/04/2026</div>
+    </div>
+</header>
+
+<main class="main-content">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('start') }}">~</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ self.title() }}</li>
+            </ol>
         </nav>
-    </footer>
 
-    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.js') }}"></script>
+        {% block content %}{% endblock %}
+    </div>
+</main>
+
+<footer class="site-footer">
+    <span class="footer-copy">© <strong>Université Savoie Mont Blanc</strong></span>
+    <span class="footer-tag">v1.0 · Flask</span>
+</footer>
+
+<script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.js') }}"></script>
+<script>
+    const toggler = document.getElementById('navToggler');
+    const nav     = document.getElementById('mainNav');
+    if (toggler && nav) toggler.addEventListener('click', () => nav.classList.toggle('open'));
+
+    document.querySelectorAll('.topbar-nav .nav-lnk').forEach(link => {
+        if (link.href === window.location.href) link.classList.add('is-active');
+    });
+</script>
 </body>
-
 </html>
